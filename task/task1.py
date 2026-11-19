@@ -19,6 +19,45 @@
 import csv
 from pathlib import Path
 
+ORIGINAL_FILE = Path("data") / "waste_log.csv"
+OUTPUT_CSV = Path("output") / "practice-02" / "waste_clean.csv"
+FIELDS = ["waste_id", "waste_date", "store_id", "product_id", "cups", "reason"]
 
+def clean_row(row):
+    if row["cups"].strip() == "" :
+        return None
+    else:
+        return{
+            "waste_id": row["waste_id"],
+            "waste_date": row["waste_date"],
+            "store_id": int(row["store_id"]),
+            "product_id": int(row["product_id"]),
+            "cups": int(row["cups"]),
+            "reason": row["reason"].strip()
+            }
 
-with open ()
+cleaned_rows = []
+
+with open (ORIGINAL_FILE, "r", encoding= "utf-8-sig") as file:
+    reader = list(csv.DictReader(file))
+    for i in reader:
+        clean = clean_row(i)
+        if clean is not None:
+            cleaned_rows.append(clean)
+
+stats = {}
+for i in cleaned_rows:
+    reason = i["reason"]
+    if reason not in stats:
+        stats[reason] = {"count": 0, "total_cups": 0}
+    stats[reason]["count"] = stats[reason]["count"] + 1
+    stats[reason]["total_cups"] = stats[reason]["total_cups"] + i["cups"]
+
+for i in stats:
+    print(f"reason: {i}, 次數: {stats[i]['count']}, 損失杯數: {stats[i]['total_cups']}")
+
+OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+with open (OUTPUT_CSV, "w", encoding="utf-8-sig", newline="" )as file:
+    writer = csv.DictWriter(file, fieldnames = FIELDS)
+    writer.writeheader()
+    writer.writerows(cleaned_rows)
