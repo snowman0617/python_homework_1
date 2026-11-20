@@ -27,3 +27,35 @@
 - `task2.py` 印出「資料表筆數： 79」；再執行一次仍是 79。
 - 四家門市的損失金額合計為 8,070 元。
 '''
+
+from db import get_connection
+import csv
+from pathlib import Path
+
+CSV = Path("output") / "practice-02" / "waste_clean.csv"
+
+with open (CSV, "r", encoding= "utf-8-sig") as file:
+    reader = list(csv.DictReader(file))
+    reader_list = []
+    for i in reader:
+        reader_list.append((i["waste_id"],
+        i["waste_date"],
+        int(i["store_id"]),
+        int(i["product_id"]),
+        int(i["cups"]),
+        i["reason"]
+        ))
+    
+insert_sql = ''' 
+INSERT INTO waste_log ("waste_id", "waste_date", "store_id", "product_id", "cups", "reason")
+VALUES (%s, %s, %s, %s, %s, %s)
+ON CONFLICT (waste_id) DO NOTHING
+'''
+
+with get_connection() as gc:
+    with gc.cursor() as cur:
+        cur.executemany(insert_sql, reader_list)
+        cur.execute("select count(*) from waste_log")
+        count = cur.fetchone()[0]
+
+print("已提交", f'資料總筆數:{count}')
