@@ -45,6 +45,9 @@ with open (ORIGINAL_FILE, "r", encoding= "utf-8-sig") as file:
         if clean is not None:
             cleaned_rows.append(clean)
 
+print(f"原始筆數：{len(reader)}")
+print(f"清理後筆數：{len(cleaned_rows)}")
+
 stats = {}
 for i in cleaned_rows:
     reason = i["reason"]
