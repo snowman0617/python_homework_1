@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "pandas>=2.3.3",
     "psycopg[binary]>=3.3.9",
     "python-dotenv>=1.2.4",
 ]
