@@ -19,3 +19,7 @@
 - `total_loss` 的合計與任務二的 SQL 查詢結果相同。
 - 觀察：損失金額最高的門市，是不是「做錯」比例最高的門市？
 '''
+
+from pathlib import Path
+
+import pandas as pd
